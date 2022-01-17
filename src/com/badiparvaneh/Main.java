@@ -53,13 +53,14 @@ public class Main {
 
         switch (optionSelected) {
             case 1:
-                if (fileNames == null) {
+                if (fileNames == null || fileNames.size() == 0) {
                     fileNames = new ArrayList<>();
                     System.out.println("There is currently no file saved in the system! Try adding a file from the file management menu!\n");
                     printMainMenu();
                 }
                 else {
                     Collections.sort(fileNames);
+                    System.out.println("\n** Here is the list of existing files in the directory **");
                     for (int i = 0; i < fileNames.size(); i++) {
                         System.out.println("\t" + fileNames.get(i));
                     }
@@ -145,6 +146,43 @@ public class Main {
     }
 
     public static void deleteFile () {
+        Scanner input = new Scanner(System.in);
+        System.out.println(" Please enter the name of the file you would like to delete: ");
+
+        String fileName = input.nextLine();
+        while (!fileNames.contains(fileName)) {
+            System.out.println("** The file name you are trying to delete doesn't exists, try a different name or 'back' to return to the menu**");
+            fileName = input.nextLine();
+            if (fileName.equals("back")) {
+                printFileMenu();
+                return;
+            }
+        }
+
+        try {
+            Path p = Paths.get("./files");
+            File folder = new File("files");
+            if (!Files.exists(p)) {
+                System.out.println("** There are currently no files! **\n");
+                printFileMenu();
+            }
+            try {
+                    File file = new File(folder, fileName);
+                    if (file.delete()) {
+                        fileNames.remove(fileNames.indexOf(file.getName()));
+                        System.out.println("** File: " + fileName + " was successfully deleted! **");
+                        printFileMenu();
+                    }
+
+                } catch (Exception e) {
+                    System.out.println(" ** Error: file could not be deleted; try again! **\n");
+                    printFileMenu();
+                }
+
+            } catch (Exception e) {
+                System.out.println("** Incorrect file path; try again! **\n");
+            }
+
         return;
     }
 
