@@ -38,13 +38,14 @@ public class Main {
         Scanner input = new Scanner(System.in);
         System.out.println("Please choose a number from the following menu: ");
         System.out.println("\t 1. Display existing files in ascending order\n "
-                     + "\t 2. Go to file management menu");
+                     + "\t 2. Go to file management menu\n "
+                     + "\t 3. Exit the program");
 
         int optionSelected = 0;
         try {
             optionSelected = input.nextInt();
-            if (optionSelected < 1 || optionSelected > 2) {
-                System.out.println("** Invalid selection; please choose either 1 or 2! **\n");
+            if (optionSelected < 1 || optionSelected > 3) {
+                System.out.println("** Invalid selection; please choose 1, 2, or 3! **\n");
                 printMainMenu();
             }
         } catch (Exception e) {
@@ -60,7 +61,6 @@ public class Main {
                     printMainMenu();
                 }
                 else {
-                    Collections.sort(fileNames);
                     System.out.println("\n** Here is the list of existing files in the directory **");
                     for (int i = 0; i < fileNames.size(); i++) {
                         System.out.println("\t" + fileNames.get(i));
@@ -72,6 +72,10 @@ public class Main {
             case 2:
                 printFileMenu();
                 break;
+            case 3:
+                System.out.println("*** Thanks for using Lockers Pvt. Ltd. File Management System ***");
+                System.out.println("\t\t******** Now exiting the program ********");
+                return;
         }
     }
 
@@ -129,9 +133,11 @@ public class Main {
                     folder.mkdir();
                 }
                 try {
+                        fileName.toLowerCase();
                         File newFile = new File(folder, fileName);
                         newFile.createNewFile();
-                        fileNames.add(fileName.toLowerCase());
+                        fileNames.add(fileName);
+                        Collections.sort(fileNames);
                     } catch (Exception e) {
                         System.out.println(" ** Error: file could not be added; try again! **\n");
                         printFileMenu();
