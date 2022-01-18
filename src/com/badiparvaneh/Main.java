@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -113,8 +114,12 @@ public class Main {
         try {
             String fileName = input.nextLine();
             while (fileNames.contains(fileName)) {
-                System.out.println("** The file name you are trying to add currently exists, try a different name **");
+                System.out.println("** The file name you are trying to add currently exists, try a different name or type 'back' to return to the menu **");
                 fileName = input.nextLine();
+                String temp = fileName.toLowerCase();
+                if (temp.equals("back")) {
+                    printFileMenu();
+                }
             }
 
             try {
@@ -126,7 +131,7 @@ public class Main {
                 try {
                         File newFile = new File(folder, fileName);
                         newFile.createNewFile();
-                        fileNames.add(fileName);
+                        fileNames.add(fileName.toLowerCase());
                     } catch (Exception e) {
                         System.out.println(" ** Error: file could not be added; try again! **\n");
                         printFileMenu();
@@ -168,12 +173,23 @@ public class Main {
             }
             try {
                     File file = new File(folder, fileName);
-                    if (file.delete()) {
-                        fileNames.remove(fileNames.indexOf(file.getName()));
-                        System.out.println("** File: " + fileName + " was successfully deleted! **");
+                    System.out.println("** Are you sure you'd like to delete " + fileName + " ? (Y/N)");
+                    Scanner safetyInput = new Scanner(System.in);
+                    String check = safetyInput.nextLine().toLowerCase();
+
+                    while (!check.equals("y") && !check.equals("n")  && !check.equals("back")) {
+                        System.out.println("** Invalid selection; type Y or N to confirm file deletion, or type 'back' to return to the menu **\n");
+                        check = safetyInput.nextLine().toLowerCase();
+                    }
+                    if (check.equals("y")) {
+                        if (file.delete()) {
+                            fileNames.remove(fileNames.indexOf(file.getName()));
+                            System.out.println("** File: " + fileName + " was successfully deleted! **");
+                            printFileMenu();
+                        }
+                    } else if (check.equals("n")) {
                         printFileMenu();
                     }
-
                 } catch (Exception e) {
                     System.out.println(" ** Error: file could not be deleted; try again! **\n");
                     printFileMenu();
