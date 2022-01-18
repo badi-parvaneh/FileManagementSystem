@@ -57,7 +57,7 @@ public class Main {
             case 1:
                 if (fileNames == null || fileNames.size() == 0) {
                     fileNames = new ArrayList<>();
-                    System.out.println("There is currently no file saved in the system! Try adding a file from the file management menu!\n");
+                    System.out.println("** There is currently no file saved in the system! Try adding a file from the file management menu! **\n");
                     printMainMenu();
                 }
                 else {
@@ -116,12 +116,11 @@ public class Main {
         System.out.println(" Please enter a name for your file: ");
 
         try {
-            String fileName = input.nextLine();
+            String fileName = input.nextLine().toLowerCase();
             while (fileNames.contains(fileName)) {
                 System.out.println("** The file name you are trying to add currently exists, try a different name or type 'back' to return to the menu **");
-                fileName = input.nextLine();
-                String temp = fileName.toLowerCase();
-                if (temp.equals("back")) {
+                fileName = input.nextLine().toLowerCase();
+                if (fileName.equals("back")) {
                     printFileMenu();
                 }
             }
@@ -179,7 +178,7 @@ public class Main {
             }
             try {
                     File file = new File(folder, fileName);
-                    System.out.println("** Are you sure you'd like to delete " + fileName + " ? (Y/N)");
+                    System.out.println("** Are you sure you'd like to delete " + fileName + "? (Y/N)");
                     Scanner safetyInput = new Scanner(System.in);
                     String check = safetyInput.nextLine().toLowerCase();
 
@@ -209,6 +208,21 @@ public class Main {
     }
 
     public static void searchFile () {
+        Scanner input = new Scanner(System.in);
+        System.out.println(" Please enter the name of the file you would like to search: ");
+
+        String fileName = input.nextLine().toLowerCase();
+        while (!fileNames.contains(fileName)) {
+            System.out.println("** The file name you are searching for doesn't exists, try a different name or 'back' to return to the menu**");
+            fileName = input.nextLine().toLowerCase();
+            if (fileName.equals("back")) {
+                printFileMenu();
+                return;
+            }
+        }
+
+        System.out.println("** File: " + fileName + " was found in the directory under ./files/" + fileName + " **\n");
+        printFileMenu();
         return;
     }
 
