@@ -12,16 +12,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
 
-    public static ArrayList<String> fileNames;
-
+    public static ArrayList<String> sortedFileNames = new ArrayList<>();
+    public static HashSet<String> fileNames;
     public static void main(String[] args) {
         //First check if files folder exists from previous execution, and load file names in the array list.
-        refreshArrayList();
+        refreshHashSet();
 
         //Introduction of the program
         System.out.println("\n");
@@ -31,7 +31,6 @@ public class Main {
         //print main menu to either display current files, or enter the file management system.
         printMainMenu();
 
-        return;
     }
 
     public static void printMainMenu() {
@@ -55,15 +54,15 @@ public class Main {
 
         switch (optionSelected) {
             case 1:
-                if (fileNames == null || fileNames.size() == 0) {
-                    fileNames = new ArrayList<>();
+                if (sortedFileNames == null || sortedFileNames.size() == 0) {
+                    //sortedFileNames = new ArrayList<>();
                     System.out.println("** There is currently no file saved in the system! Try adding a file from the file management menu! **\n");
                     printMainMenu();
                 }
                 else {
                     System.out.println("\n** Here is the list of existing files in the directory **");
-                    for (int i = 0; i < fileNames.size(); i++) {
-                        System.out.println("\t" + fileNames.get(i));
+                    for (String sortedFileName : sortedFileNames) {
+                        System.out.println("\t" + sortedFileName);
                     }
                 System.out.println();
                 printMainMenu();
@@ -75,7 +74,6 @@ public class Main {
             case 3:
                 System.out.println("*** Thanks for using Lockers Pvt. Ltd. File Management System ***");
                 System.out.println("\t\t******** Now exiting the program ********");
-                return;
         }
     }
 
@@ -95,20 +93,12 @@ public class Main {
             printFileMenu();
         }
 
-        switch (optionSelected) {
-            case 1:
-                addFile();
-                break;
-            case 2:
-                deleteFile();
-                break;
-            case 3:
-                searchFile();
-                break;
-            case 4:
-                printMainMenu();
-                break;
-        }
+         switch (optionSelected) {
+             case 1 -> addFile();
+             case 2 -> deleteFile();
+             case 3 -> searchFile();
+             case 4 -> printMainMenu();
+         }
     }
 
     public static void addFile () {
@@ -136,7 +126,8 @@ public class Main {
                         File newFile = new File(folder, fileName);
                         newFile.createNewFile();
                         fileNames.add(fileName);
-                        Collections.sort(fileNames);
+                        sortedFileNames.add(fileName);
+                        Collections.sort(sortedFileNames);
                     } catch (Exception e) {
                         System.out.println(" ** Error: file could not be added; try again! **\n");
                         printFileMenu();
@@ -152,17 +143,16 @@ public class Main {
             printFileMenu();
         }
 
-        return;
     }
 
     public static void deleteFile () {
         Scanner input = new Scanner(System.in);
         System.out.println(" Please enter the name of the file you would like to delete: ");
 
-        String fileName = input.nextLine();
+        String fileName = input.nextLine().toLowerCase();
         while (!fileNames.contains(fileName)) {
             System.out.println("** The file name you are trying to delete doesn't exists, try a different name or 'back' to return to the menu**");
-            fileName = input.nextLine();
+            fileName = input.nextLine().toLowerCase();
             if (fileName.equals("back")) {
                 printFileMenu();
                 return;
@@ -188,7 +178,8 @@ public class Main {
                     }
                     if (check.equals("y")) {
                         if (file.delete()) {
-                            fileNames.remove(fileNames.indexOf(file.getName()));
+                            fileNames.remove(fileName);
+                            sortedFileNames.remove(fileName);
                             System.out.println("** File: " + fileName + " was successfully deleted! **");
                             printFileMenu();
                         }
@@ -204,7 +195,6 @@ public class Main {
                 System.out.println("** Incorrect file path; try again! **\n");
             }
 
-        return;
     }
 
     public static void searchFile () {
@@ -223,12 +213,11 @@ public class Main {
 
         System.out.println("** File: " + fileName + " was found in the directory under ./files/" + fileName + " **\n");
         printFileMenu();
-        return;
     }
 
-    public static void refreshArrayList (){
+    public static void refreshHashSet (){
         if (fileNames == null) {
-            fileNames = new ArrayList<>();
+            fileNames = new HashSet<>();
         }
         Path p = Paths.get("./files");
         if (Files.exists(p)) {
@@ -237,9 +226,10 @@ public class Main {
             if (files != null) {
                 for (File file : files) {
                     fileNames.add(file.getName());
+                    sortedFileNames.add(file.getName());
                 }
+                Collections.sort(sortedFileNames);
             }
         }
-        return;
     }
 }
